@@ -2,19 +2,19 @@
 
 ## Days 01–11 Quick Recap
 
-| Day | Topic | Key Takeaway |
-|-----|-------|-------------|
-| 01 | DevOps learning plan | Career blueprint — goals, timeline, consistency |
-| 02 | Linux architecture & systemd | Kernel, user space, process states, init system |
-| 03 | Linux commands cheat sheet | Command toolkit for process, filesystem, networking |
-| 04 | Processes & services practice | `ps`, `systemctl status`, `journalctl` hands-on |
-| 05 | Troubleshooting runbook | CPU, memory, disk, network, logs — repeatable flow |
-| 06 | File read/write | `touch`, `>`, `>>`, `tee`, `cat`, `head`, `tail` |
-| 07 | Filesystem hierarchy + scenarios | `/etc`, `/var/log`, log rotation, `journalctl -f` |
-| 08 | Cloud server — Nginx on AWS EC2 | SSH, security groups, scp, log rotation discovery |
-| 09 | User & group management | `useradd`, `groupadd`, `usermod -aG`, shared dirs |
-| 10 | File permissions | `chmod` symbolic and octal, default 644, `mkdir -m` |
-| 11 | File ownership | `chown user:group`, `chgrp`, `chown -R` |
+| Day | Topic                            | Key Takeaway                                        |
+| --- | -------------------------------- | --------------------------------------------------- |
+| 01  | DevOps learning plan             | Career blueprint — goals, timeline, consistency     |
+| 02  | Linux architecture & systemd     | Kernel, user space, process states, init system     |
+| 03  | Linux commands cheat sheet       | Command toolkit for process, filesystem, networking |
+| 04  | Processes & services practice    | `ps`, `systemctl status`, `journalctl` hands-on     |
+| 05  | Troubleshooting runbook          | CPU, memory, disk, network, logs — repeatable flow  |
+| 06  | File read/write                  | `touch`, `>`, `>>`, `tee`, `cat`, `head`, `tail`    |
+| 07  | Filesystem hierarchy + scenarios | `/etc`, `/var/log`, log rotation, `journalctl -f`   |
+| 08  | Cloud server — Nginx on AWS EC2  | SSH, security groups, scp, log rotation discovery   |
+| 09  | User & group management          | `useradd`, `groupadd`, `usermod -aG`, shared dirs   |
+| 10  | File permissions                 | `chmod` symbolic and octal, default 644, `mkdir -m` |
+| 11  | File ownership                   | `chown user:group`, `chgrp`, `chown -R`             |
 
 ---
 
@@ -29,6 +29,7 @@ Each day builds on the previous one — commands from Day 06 were used in Day 08
 ## Block 2: Command Reruns
 
 ### Processes & Services
+
 ```bash
 ps aux --sort=-%cpu | head -5
 systemctl status nginx
@@ -36,6 +37,7 @@ journalctl -u nginx -n 20
 ```
 
 ### File Skills
+
 ```bash
 echo "revision day 12" >> /tmp/revision.txt && cat /tmp/revision.txt
 ls -lh /var/log/nginx/
@@ -43,6 +45,7 @@ tail -n 5 /var/log/nginx/access.log.1
 ```
 
 ### Permissions & Ownership
+
 ```bash
 touch /tmp/test-revision.sh && ls -l /tmp/test-revision.sh
 chmod 750 /tmp/test-revision.sh && ls -l /tmp/test-revision.sh
@@ -67,10 +70,13 @@ groups tokyo
 ```bash
 systemctl status servicename
 ```
+
 Shows whether the service is active, failed, or stopped — along with recent log snippets inline. If more detail is needed:
+
 ```bash
 journalctl -u servicename -n 50
 ```
+
 Reads the last 50 log lines from journald to find the exact error.
 
 ---
@@ -86,6 +92,7 @@ ls -ld /opt/dev-project
 ```
 
 Key rules:
+
 - Never use `usermod -G` without `-a` — it replaces all group memberships silently
 - Never use `chown -R` without checking what's inside the directory first
 - Always use `ls -ld` (with `d`) to check directory ownership — without `d` it lists contents instead
@@ -124,6 +131,6 @@ And ownership + permissions always follow the same pattern:
 chown user:group path → chmod NNN path → ls -l to verify
 ```
 
----
+## ![alt text](<Pasted image.png>)
 
-*Day 12 of #90DaysOfDevOps — TrainWithShubham*
+_Day 12 of #90DaysOfDevOps — TrainWithShubham_
