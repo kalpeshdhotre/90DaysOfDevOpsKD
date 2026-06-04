@@ -192,5 +192,3 @@ With traditional partitions, resizing requires unmounting, repartitioning, and r
 3. **Loop devices make LVM practice accessible** — `dd` + `losetup` lets you simulate real disk operations entirely in `/tmp` without any hardware. Same commands, same behavior.
 
 ---
-
-_Day 13 of #90DaysOfDevOps — TrainWithShubham_
