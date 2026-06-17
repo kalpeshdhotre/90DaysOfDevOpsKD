@@ -1,19 +1,22 @@
+![alt text](LinkedIn.jpg)
+
 # Day 26 – GitHub CLI: Manage GitHub from Your Terminal
 
 ## What is `gh`?
 
 GitHub CLI (`gh`) is the official command-line tool for interacting with the **GitHub platform** — not just Git. While `git` handles local repo operations and the remote Git protocol, `gh` talks to GitHub's API: issues, pull requests, Actions, releases, and more.
 
-| Tool | Talks to |
-|---|---|
-| `git` | Local repo + remote Git protocol |
-| `gh` | GitHub platform (PRs, issues, Actions, gists, releases) |
+| Tool  | Talks to                                                |
+| ----- | ------------------------------------------------------- |
+| `git` | Local repo + remote Git protocol                        |
+| `gh`  | GitHub platform (PRs, issues, Actions, gists, releases) |
 
 ---
 
 ## Task 1: Install and Authenticate
 
 ### Installation (Ubuntu/Debian)
+
 ```bash
 (type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) \
   && sudo mkdir -p -m 755 /etc/apt/keyrings \
@@ -28,6 +31,7 @@ gh --version
 ```
 
 ### Authentication
+
 ```bash
 gh auth login
 # GitHub.com → SSH → select existing key → Login with browser
@@ -36,6 +40,7 @@ gh auth status   # verify active account
 ```
 
 ### Authentication methods `gh` supports
+
 - **Browser (OAuth)** — opens github.com, pastes a one-time code
 - **Token (PAT)** — `gh auth login --with-token` → paste a Personal Access Token
 - **SSH** — uses your SSH key for Git operations
@@ -162,11 +167,11 @@ git branch -d day-26/gh-cli-practice
 
 ### Merge methods `gh pr merge` supports
 
-| Flag | Method | Best for |
-|---|---|---|
-| `--merge` | Merge commit | Preserving full history with a merge node |
+| Flag       | Method           | Best for                                        |
+| ---------- | ---------------- | ----------------------------------------------- |
+| `--merge`  | Merge commit     | Preserving full history with a merge node       |
 | `--squash` | Squash and merge | Condensing all PR commits into one clean commit |
-| `--rebase` | Rebase and merge | Linear history, no merge commit |
+| `--rebase` | Rebase and merge | Linear history, no merge commit                 |
 
 ### Reviewing someone else's PR
 
@@ -255,5 +260,6 @@ gh search repos devops --language shell --sort stars
 ---
 
 ## Resources
+
 - [GitHub CLI Docs](https://cli.github.com/manual/)
 - [gh on GitHub](https://github.com/cli/cli)
