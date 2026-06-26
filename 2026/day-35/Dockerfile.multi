@@ -1,0 +1,14 @@
+# Stage 1 — Builder (has the Go compiler)
+FROM golang:1.22-alpine AS builder
+
+WORKDIR /app
+COPY app/ .
+RUN go mod init hello && go build -o hello .
+
+# Stage 2 — Runner (tiny, no compiler at all)
+FROM alpine:3.19
+
+WORKDIR /app
+COPY --from=builder /app/hello .
+
+CMD ["./hello"]
