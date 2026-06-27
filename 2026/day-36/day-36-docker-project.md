@@ -5,6 +5,7 @@
 I built a **Node.js Express + MongoDB Todo REST API** from scratch and Dockerized it end-to-end.
 
 **Why this app?**
+
 - Familiar stack (JS/Node) — so all mental energy went into Docker, not app logic
 - Represents a real-world pattern: stateless API + stateful database
 - Covers every Compose requirement: multi-service, volumes, networking, healthchecks
@@ -31,11 +32,11 @@ day-36-docker-project/
 
 A simple REST API with three endpoints:
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/health` | Health check |
-| GET | `/todos` | List all todos |
-| POST | `/todos` | Create a todo |
+| Method | Endpoint  | Description    |
+| ------ | --------- | -------------- |
+| GET    | `/health` | Health check   |
+| GET    | `/todos`  | List all todos |
+| POST   | `/todos`  | Create a todo  |
 
 ---
 
@@ -93,46 +94,46 @@ CMD ["node", "server.js"]
 name: todo-app
 
 networks:
-  app-net:
-    driver: bridge             # Custom isolated network — services talk by name
+    app-net:
+        driver: bridge # Custom isolated network — services talk by name
 
 volumes:
-  mongo-data:                  # Named volume — data persists across container restarts
+    mongo-data: # Named volume — data persists across container restarts
 
 services:
-  mongo:
-    image: mongo:7-jammy
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-    volumes:
-      - mongo-data:/data/db    # Persist MongoDB data to named volume
-    networks:
-      - app-net
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s        # Give Mongo time to initialize before first probe
+    mongo:
+        image: mongo:7-jammy
+        restart: unless-stopped
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+        volumes:
+            - mongo-data:/data/db # Persist MongoDB data to named volume
+        networks:
+            - app-net
+        healthcheck:
+            test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 20s # Give Mongo time to initialize before first probe
 
-  api:
-    image: kalpeshdhotre/todo-api:latest   # Pulled from Docker Hub
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    environment:
-      MONGO_URI: ${MONGO_URI}
-      PORT: ${PORT}
-    networks:
-      - app-net
-    depends_on:
-      mongo:
-        condition: service_healthy   # API waits until Mongo passes healthcheck
+    api:
+        image: kalpeshdhotre/todo-api:latest # Pulled from Docker Hub
+        restart: unless-stopped
+        ports:
+            - "3000:3000"
+        environment:
+            MONGO_URI: ${MONGO_URI}
+            PORT: ${PORT}
+        networks:
+            - app-net
+        depends_on:
+            mongo:
+                condition: service_healthy # API waits until Mongo passes healthcheck
 ```
 
----
+## ![](./To-do-app-checking.png)
 
 ## .env.example
 
@@ -148,9 +149,11 @@ PORT=3000
 ## Challenges Faced and How I Solved Them
 
 ### Challenge 1: Port Conflict on 3000
+
 When running the container, port 3000 was already occupied by another process on the host.
 
 **Fix:** Identified the conflicting process using:
+
 ```bash
 # On Windows
 netstat -ano | findstr :3000
@@ -160,15 +163,19 @@ docker compose up  # after freeing the port
 ```
 
 ### Challenge 2: `docker run` fails without MongoDB
+
 Running `docker run kalpeshdhotre/todo-api:latest` directly caused an immediate crash:
+
 ```
 MongooseServerSelectionError: connect ECONNREFUSED 127.0.0.1:27017
 ```
+
 The app fell back to `localhost:27017` — but there was no MongoDB inside the container.
 
 **Fix:** Understood that this image is designed to run via `docker compose`, not standalone. The `.env` supplies `MONGO_URI` pointing to the `mongo` service by its Compose service name — which only resolves inside the custom Docker network.
 
 ### Challenge 3: `depends_on` alone isn't enough
+
 Initially used `depends_on: mongo` without a health condition. The API started before MongoDB was ready, causing connection errors.
 
 **Fix:** Added `condition: service_healthy` with a proper `mongosh ping` healthcheck on the mongo service. API now waits until Mongo is genuinely ready.
@@ -177,10 +184,10 @@ Initially used `depends_on: mongo` without a health condition. The API started b
 
 ## Final Image Size
 
-| Stage | Base Image | Compressed (Docker Hub) |
-|-------|-----------|--------------------------|
-| Builder | node:20-alpine | — |
-| **Final (runner)** | **node:20-alpine** | **51.85 MB** |
+| Stage              | Base Image         | Compressed (Docker Hub) |
+| ------------------ | ------------------ | ----------------------- |
+| Builder            | node:20-alpine     | —                       |
+| **Final (runner)** | **node:20-alpine** | **51.85 MB**            |
 
 Multi-stage build kept the final image lean — only production `node_modules` and `server.js` make it into the runtime image.
 
@@ -189,6 +196,7 @@ Multi-stage build kept the final image lean — only production `node_modules` a
 ## How to Run This App
 
 ### Prerequisites
+
 - Docker + Docker Compose installed
 
 ### Steps
@@ -221,6 +229,7 @@ curl http://localhost:3000/todos
 🔗 **Link:** https://hub.docker.com/r/kalpeshdhotre/todo-api
 
 Pull it directly:
+
 ```bash
 docker pull kalpeshdhotre/todo-api:latest
 ```
@@ -238,4 +247,4 @@ docker pull kalpeshdhotre/todo-api:latest
 
 ---
 
-*Day 36 of #90DaysOfDevOps | TrainWithShubham*
+_Day 36 of #90DaysOfDevOps | TrainWithShubham_
