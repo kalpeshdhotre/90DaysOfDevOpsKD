@@ -1,0 +1,14 @@
+name: kalpesh dhotre
+role: devops engineer
+experience_years: 22
+location: India
+
+tools:
+    - docker
+    - kubernetes
+    - git
+    - linux
+    - gcp
+    - aws
+
+hobbies: [trekking, cycling]
