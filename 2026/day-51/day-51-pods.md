@@ -2,18 +2,19 @@
 
 ## The Four Required Fields of a Kubernetes Manifest
 
-| Field | Purpose |
-|---|---|
-| `apiVersion` | Which API group/version to use (`v1` for core resources like Pods) |
-| `kind` | The resource type being defined (`Pod`, `Deployment`, `Service`, etc.) |
-| `metadata` | Identity of the resource — `name` (required), `labels`, `namespace` |
-| `spec` | Desired state — for a Pod, the containers, images, ports, etc. |
+| Field        | Purpose                                                                |
+| ------------ | ---------------------------------------------------------------------- |
+| `apiVersion` | Which API group/version to use (`v1` for core resources like Pods)     |
+| `kind`       | The resource type being defined (`Pod`, `Deployment`, `Service`, etc.) |
+| `metadata`   | Identity of the resource — `name` (required), `labels`, `namespace`    |
+| `spec`       | Desired state — for a Pod, the containers, images, ports, etc.         |
 
 ---
 
 ## My Pod Manifests
 
 ### 1. nginx-pod.yaml
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -23,13 +24,14 @@ metadata:
     app: nginx
 spec:
   containers:
-  - name: nginx
-    image: nginx:latest
-    ports:
-    - containerPort: 80
+    - name: nginx
+      image: nginx:latest
+      ports:
+        - containerPort: 80
 ```
 
 ### 2. busybox-pod.yaml
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -40,12 +42,13 @@ metadata:
     environment: dev
 spec:
   containers:
-  - name: busybox
-    image: busybox:latest
-    command: ["sh", "-c", "echo Hello from BusyBox && sleep 3600"]
+    - name: busybox
+      image: busybox:latest
+      command: ["sh", "-c", "echo Hello from BusyBox && sleep 3600"]
 ```
 
 ### 3. httpd-pod.yaml
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -57,10 +60,10 @@ metadata:
     team: devops
 spec:
   containers:
-  - name: httpd
-    image: httpd:latest
-    ports:
-    - containerPort: 80
+    - name: httpd
+      image: httpd:latest
+      ports:
+        - containerPort: 80
 ```
 
 ---
@@ -89,19 +92,19 @@ error: error validating "broken-pod.yaml": error validating data: ValidationErro
 
 ## Screenshots
 
-`kubectl get pods` (all three pods Running):
-
-*[screenshot here]*
+`kubectl get pods` (all pods Running):
 
 `kubectl get pods --show-labels`:
 
-*[screenshot here]*
+![alt text](<Screenshot From 2026-07-12 18-21-35.png>)
 
 Server-side dry-run error output:
 
-*[screenshot here]*
+![alt text](<Screenshot From 2026-07-12 18-13-05.png>)
 
----
+All cleanup:
+
+## ![alt text](<Screenshot From 2026-07-12 18-23-27.png>)
 
 ## What Happens When You Delete a Standalone Pod?
 
