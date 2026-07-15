@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: envfrom-pod
+spec:
+  containers:
+    - name: busybox
+      image: busybox
+      command: ["sh", "-c", "env | grep APP_ && sleep 3600"]
+      envFrom:
+        - configMapRef:
+            name: app-config
