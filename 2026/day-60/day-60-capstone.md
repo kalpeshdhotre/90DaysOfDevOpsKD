@@ -172,34 +172,7 @@ kubectl get namespace capstone
 
 ## Architecture
 
-```
-                          ┌─────────────────────┐
-                          │   capstone namespace │
-                          └─────────────────────┘
-
-  Client (browser)
-        │
-        │ kubectl port-forward
-        ▼
-  wordpress (NodePort Svc, :30080)
-        │
-        ▼
-  wordpress Deployment (2 replicas)
-   - envFrom: wordpress-config (ConfigMap)
-   - secretKeyRef: mysql-secret (DB_USER, DB_PASSWORD)
-   - liveness/readiness probe: /wp-login.php
-        │
-        │ WORDPRESS_DB_HOST = mysql-0.mysql.capstone.svc.cluster.local:3306
-        ▼
-  mysql (Headless Svc, clusterIP: None)
-        │
-        ▼
-  mysql-0 (StatefulSet, 1 replica)
-   - envFrom: mysql-secret
-   - volumeClaimTemplate → PVC (1Gi) → /var/lib/mysql
-
-  HPA (wordpress-hpa) watches wordpress Deployment CPU via metrics-server
-```
+![alt text](image.png)
 
 ---
 
