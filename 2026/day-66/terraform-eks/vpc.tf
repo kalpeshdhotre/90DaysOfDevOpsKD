@@ -15,10 +15,12 @@ module "vpc" {
   enable_dns_hostnames = true
 
   public_subnet_tags = {
-    "kubernetes.io/role/elb" = 1
+    "kubernetes.io/role/elb"              = 1
+    "kubernetes.io/cluster/terraweek-eks" = "shared"
   }
 
   private_subnet_tags = {
-    "kubernetes.io/role/internal-elb" = 1
+    "kubernetes.io/role/internal-elb"     = 1
+    "kubernetes.io/cluster/terraweek-eks" = "shared"
   }
 }
