@@ -1,6 +1,7 @@
 # Day 67 — TerraWeek Capstone: Multi-Environment Infrastructure with Workspaces and Modules
 
 ## Overview
+
 Seven days of Terraform came together in one project: a single codebase deploying three fully isolated environments (dev, staging, prod) using custom modules and Terraform workspaces — no copy-pasted directories, no manual console clicks.
 
 ---
@@ -34,9 +35,12 @@ terraweek-capstone/
 ```
 
 **Why this structure is best practice:**
+
 - Single responsibility per root file — `providers.tf` only holds provider/backend config, `variables.tf` only declarations, `locals.tf` only derived values. Anyone opening the repo can find what they need immediately.
-- `modules/` cleanly separates *reusable* infrastructure (VPC, SG, EC2) from *environment wiring* in root — each module is independently testable and reusable across projects.
+- `modules/` cleanly separates _reusable_ infrastructure (VPC, SG, EC2) from _environment wiring_ in root — each module is independently testable and reusable across projects.
 - `.gitignore` keeps state files and `.terraform/` provider caches out of version control — state can contain sensitive data in plaintext and should never be committed.
+
+![alt text](<md-screenshots/Screenshot From 2026-08-02 21-02-37.png>)
 
 ---
 
@@ -58,11 +62,12 @@ Locally: `terraform.tfstate.d/<workspace_name>/terraform.tfstate`. With a remote
 **Q: How is this different from separate directories per environment?**
 Separate directories = fully independent codebases that can drift apart over time. Workspaces = one codebase, one set of `.tf` files, state isolated per workspace — DRY, but all environments share identical resource structure (differences come only from variables, not code).
 
----
+## ![alt text](<md-screenshots/Screenshot From 2026-08-02 20-57-07.png>)
 
 ## 3. Custom Modules
 
 ### Module 1: `modules/vpc/`
+
 Creates a VPC, public subnet, internet gateway, route table, and route table association.
 
 ```hcl
@@ -123,11 +128,13 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 ```
+
 **Outputs:** `vpc_id`, `subnet_id`
 
 ---
 
 ### Module 2: `modules/security-group/`
+
 Dynamic ingress rules driven by a list of ports; open egress.
 
 ```hcl
@@ -163,6 +170,7 @@ resource "aws_security_group" "this" {
   }
 }
 ```
+
 **Output:** `sg_id`
 
 ---
@@ -185,6 +193,7 @@ resource "aws_instance" "this" {
   }
 }
 ```
+
 **Outputs:** `instance_id`, `public_ip`
 
 ---
@@ -241,20 +250,16 @@ module "ec2_instance" {
 
 ## 5. Environment-Specific tfvars
 
-| Variable | dev | staging | prod |
-|---|---|---|---|
-| `vpc_cidr` | `10.0.0.0/16` | `10.1.0.0/16` | `10.2.0.0/16` |
-| `subnet_cidr` | `10.0.1.0/24` | `10.1.1.0/24` | `10.2.1.0/24` |
-| `instance_type` | `t2.micro` | `t2.small` | `t3.small` |
-| `ingress_ports` | `[22, 80]` | `[22, 80, 443]` | `[80, 443]` |
+| Variable        | dev           | staging         | prod          |
+| --------------- | ------------- | --------------- | ------------- |
+| `vpc_cidr`      | `10.0.0.0/16` | `10.1.0.0/16`   | `10.2.0.0/16` |
+| `subnet_cidr`   | `10.0.1.0/24` | `10.1.1.0/24`   | `10.2.1.0/24` |
+| `instance_type` | `t2.micro`    | `t2.small`      | `t3.small`    |
+| `ingress_ports` | `[22, 80]`    | `[22, 80, 443]` | `[80, 443]`   |
 
 **Key difference to note:** dev and staging allow SSH (port 22); **prod does not** — production traffic only accepts HTTP/HTTPS, forcing any prod access through proper channels (SSM Session Manager, bastion, etc.) instead of open SSH.
 
-```
-[SCREENSHOT: bat dev.tfvars staging.tfvars prod.tfvars — side-by-side view of all three tfvars files]
-```
-
----
+## ![alt text](<md-screenshots/Screenshot From 2026-08-03 20-44-11-1.png>)
 
 ## 6. Deployment Verification
 
@@ -289,15 +294,15 @@ Everything learned across TerraWeek (Days 61–67), consolidated:
 
 ## 8. TerraWeek Day-by-Day Recap
 
-| Day | Concepts |
-|-----|----------|
-| 61 | IaC, HCL, init/plan/apply/destroy, state basics |
-| 62 | Providers, resources, dependencies, lifecycle |
-| 63 | Variables, outputs, data sources, locals, functions |
-| 64 | Remote backend, locking, import, drift |
-| 65 | Custom modules, registry modules, versioning |
-| 66 | EKS with modules, real-world provisioning |
-| 67 | Workspaces, multi-env, capstone project |
+| Day | Concepts                                            |
+| --- | --------------------------------------------------- |
+| 61  | IaC, HCL, init/plan/apply/destroy, state basics     |
+| 62  | Providers, resources, dependencies, lifecycle       |
+| 63  | Variables, outputs, data sources, locals, functions |
+| 64  | Remote backend, locking, import, drift              |
+| 65  | Custom modules, registry modules, versioning        |
+| 66  | EKS with modules, real-world provisioning           |
+| 67  | Workspaces, multi-env, capstone project             |
 
 ---
 
@@ -323,4 +328,4 @@ All three environments destroyed cleanly. Account verified clean.
 
 ---
 
-*#90DaysOfDevOps #TerraWeek #DevOpsKaJosh #TrainWithShubham*
+_#90DaysOfDevOps #TerraWeek #DevOpsKaJosh #TrainWithShubham_
