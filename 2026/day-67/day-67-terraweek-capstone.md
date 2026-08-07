@@ -263,13 +263,9 @@ module "ec2_instance" {
 
 ## 6. Deployment Verification
 
-```
-[SCREENSHOT: AWS Console — all 3 VPCs listed together with distinct CIDR ranges]
-[SCREENSHOT: AWS Console — all 3 EC2 instances listed together, showing t2.micro / t2.small / t3.small]
-[SCREENSHOT: terraform output for dev workspace]
-[SCREENSHOT: terraform output for staging workspace]
-[SCREENSHOT: terraform output for prod workspace]
-```
+![alt text](<md-screenshots/Screenshot From 2026-08-07 19-29-59.png>)
+![alt text](<md-screenshots/Screenshot From 2026-08-07 19-28-22.png>)
+![alt text](<md-screenshots/Screenshot From 2026-08-07 19-28-51.png>)
 
 **Isolation confirmed:** each workspace maintains its own state file (`terraform.tfstate.d/<workspace>/terraform.tfstate`), so `dev`, `staging`, and `prod` resource addresses never collide — despite sharing identical `.tf` code. Distinct CIDR ranges additionally rule out any accidental VPC peering/routing overlap between environments.
 
@@ -308,21 +304,7 @@ Everything learned across TerraWeek (Days 61–67), consolidated:
 
 ## 9. Cleanup
 
-```bash
-terraform workspace select prod    && terraform destroy -var-file="prod.tfvars"    -auto-approve
-terraform workspace select staging && terraform destroy -var-file="staging.tfvars" -auto-approve
-terraform workspace select dev     && terraform destroy -var-file="dev.tfvars"     -auto-approve
-
-terraform workspace select default
-terraform workspace delete dev
-terraform workspace delete staging
-terraform workspace delete prod
-```
-
-```
-[SCREENSHOT: terraform workspace list showing only "default"]
-[SCREENSHOT: AWS Console — clean state, no terraweek-* resources remaining]
-```
+![alt text](<md-screenshots/Screenshot From 2026-08-07 19-35-44.png>)
 
 All three environments destroyed cleanly. Account verified clean.
 
