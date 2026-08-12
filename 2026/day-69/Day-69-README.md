@@ -1,6 +1,7 @@
 # Day 69 -- Ansible Playbooks and Modules
 
 ## Task
+
 Ad-hoc commands are useful for quick checks, but real automation lives in playbooks. A playbook is a YAML file that describes the desired state of your servers -- which packages to install, which services to run, which files to place where. You write it once, run it a hundred times, and get the same result every time.
 
 Today you write your first playbooks and learn the modules that you will use on every project.
@@ -8,6 +9,7 @@ Today you write your first playbooks and learn the modules that you will use on 
 ---
 
 ## Expected Output
+
 - Multiple playbooks that install packages, manage services, and configure files
 - A clear understanding of plays, tasks, modules, and handlers
 - A markdown file: `day-69-playbooks.md`
@@ -17,6 +19,7 @@ Today you write your first playbooks and learn the modules that you will use on 
 ## Challenge Tasks
 
 ### Task 1: Your First Playbook
+
 Create `install-nginx.yml`:
 
 ```yaml
@@ -46,6 +49,7 @@ Create `install-nginx.yml`:
 (Use `apt` instead of `yum` if your instances run Ubuntu)
 
 Run it:
+
 ```bash
 ansible-playbook install-nginx.yml
 ```
@@ -59,21 +63,23 @@ Now run it **again**. Notice that tasks show `ok` instead of `changed`. This is 
 ---
 
 ### Task 2: Understand the Playbook Structure
+
 Open your playbook and annotate each part in your notes:
 
 ```yaml
----                                    # YAML document start
-- name: Play name                      # PLAY -- targets a group of hosts
-  hosts: web                           # Which inventory group to run on
-  become: true                         # Run tasks as root (sudo)
+--- # YAML document start
+- name: Play name # PLAY -- targets a group of hosts
+  hosts: web # Which inventory group to run on
+  become: true # Run tasks as root (sudo)
 
-  tasks:                               # List of TASKS in this play
-    - name: Task name                  # TASK -- one unit of work
-      module_name:                     # MODULE -- what Ansible does
-        key: value                     # Module arguments
+  tasks: # List of TASKS in this play
+    - name: Task name # TASK -- one unit of work
+      module_name: # MODULE -- what Ansible does
+        key: value # Module arguments
 ```
 
 Answer:
+
 1. What is the difference between a play and a task?
 2. Can you have multiple plays in one playbook?
 3. What does `become: true` do at the play level vs the task level?
@@ -82,9 +88,11 @@ Answer:
 ---
 
 ### Task 3: Learn the Essential Modules
+
 Practice each of these modules by writing a playbook called `essential-modules.yml` with multiple tasks:
 
 1. **`yum`/`apt`** -- Install and remove packages:
+
 ```yaml
 - name: Install multiple packages
   yum:
@@ -97,6 +105,7 @@ Practice each of these modules by writing a playbook called `essential-modules.y
 ```
 
 2. **`service`** -- Manage services:
+
 ```yaml
 - name: Ensure Nginx is running
   service:
@@ -106,6 +115,7 @@ Practice each of these modules by writing a playbook called `essential-modules.y
 ```
 
 3. **`copy`** -- Copy files from control node to managed nodes:
+
 ```yaml
 - name: Copy config file
   copy:
@@ -113,20 +123,22 @@ Practice each of these modules by writing a playbook called `essential-modules.y
     dest: /etc/app.conf
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
 ```
 
 4. **`file`** -- Create directories and manage permissions:
+
 ```yaml
 - name: Create application directory
   file:
     path: /opt/myapp
     state: directory
     owner: ec2-user
-    mode: '0755'
+    mode: "0755"
 ```
 
 5. **`command`** -- Run a command (no shell features):
+
 ```yaml
 - name: Check disk space
   command: df -h
@@ -138,6 +150,7 @@ Practice each of these modules by writing a playbook called `essential-modules.y
 ```
 
 6. **`shell`** -- Run a command with shell features (pipes, redirects):
+
 ```yaml
 - name: Count running processes
   shell: ps aux | wc -l
@@ -149,11 +162,12 @@ Practice each of these modules by writing a playbook called `essential-modules.y
 ```
 
 7. **`lineinfile`** -- Add or modify a single line in a file:
+
 ```yaml
 - name: Set timezone in environment
   lineinfile:
     path: /etc/environment
-    line: 'TZ=Asia/Kolkata'
+    line: "TZ=Asia/Kolkata"
     create: true
 ```
 
@@ -164,9 +178,11 @@ Create a `files/` directory with a sample `app.conf` file for the copy task. Run
 ---
 
 ### Task 4: Handlers -- Restart Services Only When Needed
+
 Handlers are tasks that run only when triggered by a `notify`. This avoids unnecessary service restarts.
 
 Create `nginx-config.yml`:
+
 ```yaml
 ---
 - name: Configure Nginx with a custom config
@@ -184,7 +200,7 @@ Create `nginx-config.yml`:
         src: files/nginx.conf
         dest: /etc/nginx/nginx.conf
         owner: root
-        mode: '0644'
+        mode: "0644"
       notify: Restart Nginx
 
     - name: Deploy custom index page
@@ -208,6 +224,7 @@ Create `nginx-config.yml`:
 Create `files/nginx.conf` with a basic Nginx config.
 
 Run the playbook:
+
 - First run: handler triggers because the config file is new
 - Second run: handler does NOT trigger because nothing changed
 
@@ -216,19 +233,23 @@ Run the playbook:
 ---
 
 ### Task 5: Dry Run, Diff, and Verbosity
+
 Before running playbooks on production, always preview changes first.
 
 1. **Dry run (check mode)** -- shows what would change without changing anything:
+
 ```bash
 ansible-playbook install-nginx.yml --check
 ```
 
 2. **Diff mode** -- shows the actual file differences:
+
 ```bash
 ansible-playbook nginx-config.yml --check --diff
 ```
 
 3. **Verbosity** -- increase output detail for debugging:
+
 ```bash
 ansible-playbook install-nginx.yml -v       # verbose
 ansible-playbook install-nginx.yml -vv      # more verbose
@@ -236,11 +257,13 @@ ansible-playbook install-nginx.yml -vvv     # connection debugging
 ```
 
 4. **Limit to specific hosts:**
+
 ```bash
 ansible-playbook install-nginx.yml --limit web-server
 ```
 
 5. **List what would be affected without running:**
+
 ```bash
 ansible-playbook install-nginx.yml --list-hosts
 ansible-playbook install-nginx.yml --list-tasks
@@ -251,6 +274,7 @@ ansible-playbook install-nginx.yml --list-tasks
 ---
 
 ### Task 6: Multiple Plays in One Playbook
+
 Write `multi-play.yml` with separate plays for each server group:
 
 ```yaml
@@ -283,7 +307,7 @@ Write `multi-play.yml` with separate plays for each server group:
       file:
         path: /opt/app
         state: directory
-        mode: '0755'
+        mode: "0755"
 
 - name: Configure database servers
   hosts: db
@@ -297,10 +321,11 @@ Write `multi-play.yml` with separate plays for each server group:
       file:
         path: /var/lib/appdata
         state: directory
-        mode: '0700'
+        mode: "0700"
 ```
 
 Run it:
+
 ```bash
 ansible-playbook multi-play.yml
 ```
@@ -312,6 +337,7 @@ Watch the output -- each play targets a different group, and tasks run only on t
 ---
 
 ## Hints
+
 - YAML indentation matters -- use 2 spaces, never tabs
 - `state: present` means "install if not already installed", `state: absent` means "remove"
 - `state: started` means "start if not running", `state: restarted` means "always restart"
@@ -324,7 +350,9 @@ Watch the output -- each play targets a different group, and tasks run only on t
 ---
 
 ## Documentation
+
 Create `day-69-playbooks.md` with:
+
 - Your first playbook with annotations explaining each section
 - All seven module examples with what each does
 - Screenshot of the playbook run showing changed vs ok tasks
@@ -335,12 +363,14 @@ Create `day-69-playbooks.md` with:
 ---
 
 ## Submission
+
 1. Add `day-69-playbooks.md` to `2026/day-69/`
 2. Commit and push to your fork
 
 ---
 
 ## Learn in Public
+
 Share on LinkedIn: "Wrote my first Ansible playbooks today -- installed Nginx, managed services, copied files, and learned handlers. Ran the same playbook twice and it made zero changes the second time. Idempotency is beautiful."
 
 `#90DaysOfDevOps` `#DevOpsKaJosh` `#TrainWithShubham`
