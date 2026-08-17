@@ -5,13 +5,13 @@
 
   tasks:
     - name: Install Nginx (only on web servers)
-      yum:
+      apt:
         name: nginx
         state: present
       when: "'web' in group_names"
 
     - name: Install MySQL (only on db servers)
-      yum:
+      apt:
         name: mysql-server
         state: present
       when: "'db' in group_names"
