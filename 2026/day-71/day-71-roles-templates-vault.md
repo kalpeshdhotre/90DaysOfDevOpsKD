@@ -18,7 +18,7 @@ ansible-playbook template-demo.yml --diff
 
 The `--diff` flag shows exactly which lines were rendered/changed in the generated config on the target host.
 
-[SCREENSHOT: template-demo.yml run output with --diff showing rendered vhost config]
+![alt text](<md-screenshots/Screenshot From 2026-08-21 18-15-28.png>)
 
 **Verification — SSH into web server, read generated config:**
 
@@ -27,7 +27,7 @@ ssh ubuntu@<web-server-ip>
 cat /etc/nginx/conf.d/terraweek-app.conf
 ```
 
-[SCREENSHOT: cat output of rendered nginx vhost config on web server showing actual values substituted for {{ app_name }}, {{ http_port }}, {{ ansible_hostname }}]
+![alt text](<md-screenshots/Screenshot From 2026-08-21 18-16-50.png>)
 
 ---
 
@@ -39,7 +39,7 @@ Generated a role skeleton:
 ansible-galaxy init roles/webserver
 ```
 
-[SCREENSHOT: terminal output of ansible-galaxy init + directory tree of roles/webserver]
+![alt text](<md-screenshots/Screenshot From 2026-08-21 18-23-20.png>)
 
 **Role directory structure:**
 
@@ -59,7 +59,7 @@ roles/
 **Q: Difference between `vars/main.yml` and `defaults/main.yml`?**
 
 - `defaults/main.yml` sits at the **lowest** point in Ansible's variable precedence order. It exists purely to provide a sane fallback — anyone calling the role (from a playbook, inventory, or `-e` on the CLI) can override it trivially.
-- `vars/main.yml` sits at a **much higher** precedence. It's meant for values the role author considers fixed/internal to the role's correct operation — a caller *can* still override it, but it takes more effort (e.g. `-e` extra-vars), so it signals "don't change this unless you know what you're doing."
+- `vars/main.yml` sits at a **much higher** precedence. It's meant for values the role author considers fixed/internal to the role's correct operation — a caller _can_ still override it, but it takes more effort (e.g. `-e` extra-vars), so it signals "don't change this unless you know what you're doing."
 
 Rule of thumb: if it's a sensible starting point → `defaults`. If it's closer to a constant the role depends on internally → `vars`.
 
@@ -80,7 +80,7 @@ Called the role from `site.yml` with vars overriding the role's `defaults/main.y
 ansible-playbook site.yml
 ```
 
-[SCREENSHOT: ansible-playbook site.yml run output — all tasks green/ok, handler triggered]
+![alt text](<md-screenshots/Screenshot From 2026-08-21 18-39-22.png>)
 
 **Verification — curl the web server:**
 
@@ -88,7 +88,7 @@ ansible-playbook site.yml
 curl http://<web-server-ip>
 ```
 
-[SCREENSHOT: curl output showing rendered index.html with app_name, hostname, IP]
+![alt text](<md-screenshots/Screenshot From 2026-08-21 18-42-10.png>)
 
 ---
 
@@ -101,11 +101,11 @@ ansible-galaxy install geerlingguy.docker
 ansible-galaxy list
 ```
 
-[SCREENSHOT: ansible-galaxy install output + ansible-galaxy list showing geerlingguy.docker installed]
+![alt text](<md-screenshots/Screenshot From 2026-08-21 18-44-19.png>)
 
 Ran `docker-setup.yml` calling `geerlingguy.docker` against the `app` host group — installs Docker with a single role reference instead of writing install tasks manually.
 
-[SCREENSHOT: ansible-playbook docker-setup.yml successful run]
+![alt text](<md-screenshots/Screenshot From 2026-08-21 18-50-27.png>)
 
 Created `requirements.yml` pinning `geerlingguy.docker` to version `7.4.1` plus `geerlingguy.ntp`, installed via:
 
@@ -130,14 +130,14 @@ ansible-vault create group_vars/db/vault.yml
 
 Added `vault_db_password`, `vault_db_root_password`, `vault_api_key` inside the editor prompt, saved.
 
-[SCREENSHOT: cat group_vars/db/vault.yml showing encrypted/unreadable ciphertext content]
+![alt text](<md-screenshots/Screenshot From 2026-08-21 18-53-01.png>)
 
 ```bash
 ansible-vault edit group_vars/db/vault.yml
 ansible-vault view group_vars/db/vault.yml
 ```
 
-[SCREENSHOT: ansible-vault view output showing decrypted plaintext after entering vault password]
+![alt text](<md-screenshots/Screenshot From 2026-08-21 18-53-38.png>)
 
 Ran `db-setup.yml` against `db` host group with the vault password supplied interactively:
 
@@ -145,7 +145,7 @@ Ran `db-setup.yml` against `db` host group with the vault password supplied inte
 ansible-playbook db-setup.yml --ask-vault-pass
 ```
 
-[SCREENSHOT: playbook run with --ask-vault-pass, debug msg confirming vault_db_password length > 0]
+![alt text](<md-screenshots/Screenshot From 2026-08-21 19-01-25.png>)
 
 Then switched to a password-file approach for automation:
 
@@ -184,17 +184,17 @@ cat /etc/db-config.env
 ls -l /etc/db-config.env
 ```
 
-[SCREENSHOT: cat of db-config.env showing decrypted secrets rendered inline + ls -l confirming 600 permissions]
+![alt text](<md-screenshots/Screenshot From 2026-08-21 19-03-22.png>)
 
 ---
 
 ## When to use Roles vs Playbooks vs Ad-hoc commands
 
-| Use | When |
-|---|---|
-| **Ad-hoc command** (`ansible web -m ping`) | One-off, throwaway check across hosts — no need to save/repeat it |
-| **Plain playbook** | A specific, one-time or small sequence of tasks not meant to be reused elsewhere (e.g. Day 68's simple provisioning play) |
-| **Role** | Any logic you'll reuse across multiple playbooks/projects, or that's complex enough to need its own tasks/handlers/templates/defaults separation — e.g. "configure a webserver" is a concept you'll reuse on every project, not just this one |
+| Use                                        | When                                                                                                                                                                                                                                          |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ad-hoc command** (`ansible web -m ping`) | One-off, throwaway check across hosts — no need to save/repeat it                                                                                                                                                                             |
+| **Plain playbook**                         | A specific, one-time or small sequence of tasks not meant to be reused elsewhere (e.g. Day 68's simple provisioning play)                                                                                                                     |
+| **Role**                                   | Any logic you'll reuse across multiple playbooks/projects, or that's complex enough to need its own tasks/handlers/templates/defaults separation — e.g. "configure a webserver" is a concept you'll reuse on every project, not just this one |
 
 ---
 
@@ -209,4 +209,5 @@ ls -l /etc/db-config.env
 ---
 
 ## Repo
+
 `github.com/kalpeshdhotre/2026/day-71/`
