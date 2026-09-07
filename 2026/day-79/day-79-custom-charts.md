@@ -250,9 +250,3 @@ One boolean removes an entire application component cleanly — no leftover orph
 12 raw, static YAML files became one versioned, configurable Helm chart. Credentials, replica counts, resource limits, storage classes, and entire optional components (MySQL, Ollama) are now all controlled through `values.yaml` or `--set` overrides — with `helm lint` and `helm template` catching mistakes before anything touches the cluster.
 
 ---
-
-## LinkedIn Post
-
-Converted the AI-BankApp's 12 raw Kubernetes manifests into a single Helm chart today. Three deployments (Spring Boot, MySQL, Ollama AI), services, secrets, PVCs, and HPA — all templated and configurable through values.yaml. One command deploys the entire stack. One boolean disables the AI chatbot. This is what production packaging looks like.
-
-`#90DaysOfDevOps` `#DevOpsKaJosh` `#TrainWithShubham`
