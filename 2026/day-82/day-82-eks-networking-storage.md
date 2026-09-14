@@ -8,21 +8,7 @@ Set up production-grade networking for the AI-BankApp on EKS using the Kubernete
 
 ## 1. Gateway API Architecture
 
-```
-[Internet]
-    |
-[AWS NLB] (auto-provisioned by Envoy Gateway on Gateway creation)
-    |
-[Gateway: bankapp-gateway]
-  |-- Listener: HTTP  (port 80)
-  |-- Listener: HTTPS (port 443, TLS terminated via bankapp-tls secret)
-    |
-[HTTPRoute: bankapp-route]  -- matches PathPrefix "/"
-    |
-[Service: bankapp-service:8080]
-    |
-[Pods: bankapp x2-4]  (sticky via BANKAPP_AFFINITY cookie)
-```
+![alt text](md-screenshots/image.png)
 
 ## 2. Gateway API vs Ingress
 
