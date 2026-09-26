@@ -31,7 +31,7 @@ spec:
     - name: https
       protocol: HTTPS
       port: 443
-      hostname: 54.196.198.169.nip.io
+      hostname: 184.72.104.60.nip.io
       tls:
         mode: Terminate
         certificateRefs:
@@ -49,7 +49,7 @@ metadata:
   namespace: bankapp
 spec:
   hostnames:
-    - 54.196.198.169.nip.io
+    - 184.72.104.60.nip.io
   parentRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
